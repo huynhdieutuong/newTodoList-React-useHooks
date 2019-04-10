@@ -4,7 +4,7 @@ import { Row, Col, Button, InputGroup, InputGroupAddon, Input } from 'reactstrap
 import Arrange from './Arrange';
 
 export default function SearchItem(props) {
-  const { items, onSearchItem } = props;
+  const { items, onSearchItem, onSortItem } = props;
 
   const [filtered, setFiltered] = useState([]);
 
@@ -19,7 +19,7 @@ export default function SearchItem(props) {
 
   return (
     <Row className="AddItem">
-      <Col md="8">
+      <Col md="6">
         <InputGroup>
           <Input 
             placeholder="Nhập từ khóa..."
@@ -36,7 +36,10 @@ export default function SearchItem(props) {
         <br />
       </Col>
       <Col md="4">
-        <Arrange />
+        <Arrange 
+          onSortItem={onSortItem}
+          filtered={filtered}
+          />
       </Col>
     </Row>
   );

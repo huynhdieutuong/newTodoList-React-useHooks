@@ -1,19 +1,24 @@
-import React, { useState, useReducer } from 'react';
+import React, { useReducer, useEffect } from 'react';
 import { Row, Col, Button, Toast, ToastBody, ToastHeader, Form, Input } from 'reactstrap';
 
 export default function AddItem(props) {
-  const { onAddItem } = props;
-  const [show, setShow] = useState(false);
-  // const [newItem, setItem] = useState({ title: '', status: true });
+  const { onAddItem, toggle, show, isEditing, valueEditing, reRender } = props;
+  const initItem = {
+    title: '',
+    status: false
+  }
   const [newItem, setItem] = useReducer(
-    (state, newState) => ({ ...state, ...newState}),
-    {
-      title: '',
-      status: true
-    }
-  )
+    (state, newState) => ({ ...state, ...newState }),
+      initItem
+  );
 
-  const toggle = () => setShow(!show);
+  useEffect(() => {
+    if (isEditing) {
+      setItem(valueEditing);
+    } else {
+      setItem(initItem);
+    }
+  }, [reRender])
 
   const onHandleChange = event => {
     const target = event.target;
@@ -25,29 +30,39 @@ export default function AddItem(props) {
   const AddItem = event => {
     event.preventDefault();
     onAddItem(newItem);
+    clearForm();
+    toggle();
+  }
 
+  const clearForm = () => {
+    setItem({
+      title: '',
+      status: false
+    })
   }
 
   return (
     <Row className="AddItem">
       <Col sm="6" md="4">
         <br />
-        <Button color="primary" onClick={toggle}>Thêm Công Việc</Button>
+        <Button color="primary" onClick={toggle}>
+          Thêm Công Việc
+        </Button>
         <br />
         <br />
         <Toast isOpen={show}>
-          <ToastHeader toggle={toggle}>Thêm công việc</ToastHeader>
+          <ToastHeader toggle={toggle}>{ isEditing === false ? 'Thêm Công Việc' : 'Cập Nhật Công Việc' }</ToastHeader>
           <ToastBody>
             <Form onSubmit={AddItem}>
-              <Input placeholder="Tên" name="title" onChange={onHandleChange}/>
+              <Input placeholder="Tên" name="title" value={newItem.title} onChange={onHandleChange}/>
               <br />
-              <Input type="select" name="status" onChange={onHandleChange}>
+              <Input type="select" name="status" value={newItem.status} onChange={onHandleChange}>
                 <option value={true}>Kích Hoạt</option>
                 <option value={false}>Ẩn</option>
               </Input>
               <br />
               <Button color="primary">Lưu Lại</Button>{' '}
-              <Button color="danger">Hủy Bỏ</Button>
+              <Button onClick={clearForm} color="danger">Hủy Bỏ</Button>
             </Form>  
           </ToastBody>
         </Toast>

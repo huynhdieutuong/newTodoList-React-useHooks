@@ -2,10 +2,11 @@ import React from 'react';
 import { Table, Badge, Button } from 'reactstrap';
 
 export default function TableItem (props) {
-  const { items, onChangeStatus, onDeleteItem } = props;
+  const { items, onChangeStatus, onDeleteItem, onEditItem } = props;
 
-  const changeStatus = index => onChangeStatus(index);
-  const deleteItem = index => onDeleteItem(index);
+  const changeStatus = id => onChangeStatus(id);
+  const deleteItem = id => onDeleteItem(id);
+  const editItem = id => onEditItem(id);
 
   return (
     <Table hover>
@@ -24,15 +25,15 @@ export default function TableItem (props) {
               <th scope="row">{index + 1}</th>
               <td>{item.title}</td>
               <td>
-                {
-                  item.status === true ? 
-                  <Badge color="danger" onClick={() => changeStatus(index)}>Kích Hoạt</Badge> : 
-                  <Badge className="ml-3" color="secondary" onClick={() => changeStatus(index)}>Ẩn</Badge> 
-                }
+                <Badge 
+                  color={ item.status === true ? 'danger' : 'secondary' }
+                  className={ item.status === true ? '' : 'ml-3' } 
+                  onClick={() => changeStatus(item.id)}
+                >{ item.status === true ? 'Kích Hoạt' : 'Ẩn' }</Badge>
               </td>
               <td>
-                <Button color="warning">Sửa</Button>{' '}
-                <Button onClick={() => deleteItem(index)} color="danger">Xóa</Button>
+                <Button onClick={() => editItem(item.id)} color="warning">Sửa</Button>{' '}
+                <Button onClick={() => deleteItem(item.id)} color="danger">Xóa</Button>
               </td>
             </tr>
           ))
