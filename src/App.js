@@ -14,23 +14,16 @@ export default function App(props) {
   if(!data) {
     data = [];
   }
+  useEffect(() => { 
+    localStorage.setItem('todoList', JSON.stringify(todoList));
+  })
+
   const [show, setShow] = useState(false); // set Show Form
   const [isEditing, setIsEditing] = useState(false);
   const [valueEditing, setValueEditing] = useState({});
   const [todoList, setTodoList] = useState(data);
-  const [filter, setFilter] = useState([]);
+  const [filter, setFilter] = useState(null);
   const [reRender, setReRender] = useState(false);
-
-  let showItem = todoList;
-  if (filter.length > 0) {
-    showItem = filter;
-  };
-
-  const [sortItem, setSortItem] = useState(showItem);
-
-  useEffect(() => {
-    localStorage.setItem('todoList', JSON.stringify(todoList));
-  })
 
   return (
     <div className="App">
@@ -70,17 +63,11 @@ export default function App(props) {
         />
 
         <SearchItem 
-          items={todoList}
-          onSearchItem={
-            filtered => setFilter(filtered)
-          }
-          onSortItem={
-            filtered => setSortItem(filtered)
-          }
+
           />
 
         <TableItem
-          items={todoList}
+          items={filter ? filter : todoList}
           onChangeStatus={
             id => {
               const index = todoList.findIndex(item => item.id === id);
@@ -105,6 +92,21 @@ export default function App(props) {
               setIsEditing(true);
               setShow(true);
               setReRender(!reRender);
+            }
+          }
+          onFilter={
+            (filterName, filterStatus) => {
+              console.log(filterName, filterStatus);
+              let newList = todoList.filter(item => item.title.toLowerCase().indexOf(filterName.toLowerCase()) !== -1);
+              if (filterStatus === '1' || filterStatus === '2') {
+                let status = null;
+                switch (filterStatus) {
+                  case '1': status = true; break;
+                  default: status = false;
+                }
+                newList = newList.filter(item => item.status === status);
+              }
+              setFilter(newList);
             }
           }
           />
